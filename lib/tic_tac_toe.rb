@@ -56,18 +56,62 @@ class TicTacToe
 
     def turn
         puts "Make your move. Please enter a position on the board between 1-9"
-        position = gets
+        position = gets.strip
         index = input_to_index(position)
         if valid_move?(index)
             move(index, current_player)
-            display_board
         else
             turn
         end
+        display_board
     end
 
+    def won?
+        WIN_COMBINATIONS.any? do |combo|
+            if position_taken?(combo[0]) && @board[combo[0]] == @board[combo[1]] && @board[combo[1]] == @board[combo[2]]
+                return combo
+            end
+        end
+    end
 
-   
+    def full?
+        turn_count == 9 ? true : false
+    end
+
+    def draw?
+        won? == false && full? == true ? true : false
+    end
+
+    def over?
+        won? || draw?
+    end
+
+    def winner
+        self.won? ? @board[won?[0]] : nil
+    end
+
+    def play
+        turn until over?
+        puts winner ? "Congratulations #{winner}!" : "Cat's Game!"
+
+    end
+
 end
 
+# describe '#full?' do
+#     it 'returns true for a draw' do
+#       game = TicTacToe.new
+#       board = ["X", "O", "X", "O", "X", "X", "O", "X", "O"]
+#       game.instance_variable_set(:@board, board)
 
+#       expect(game.full?).to be_truthy
+#     end
+
+#     it 'returns false for an in-progress game' do
+#       game = TicTacToe.new
+#       board = ["X", " ", "X", " ", "X", " ", "O", "O", " "]
+#       game.instance_variable_set(:@board, board)
+
+#       expect(game.full?).to be_falsey
+#     end
+#   end
